@@ -1,0 +1,2 @@
+Sorted array is
+0 2 2 3 3 6 8 9 
