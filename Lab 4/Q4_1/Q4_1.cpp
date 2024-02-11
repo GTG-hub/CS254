@@ -5,32 +5,69 @@
 // Given an array of integers A[ ], if i < j and A[i] > A[j] then the pair (i, j) is
 // called the inversion of an array A[ ]. Write a program to find the total counts
 // of inversion in an array A[ ].
-
-
-#include <iostream>
+// C++ program to Count
+// Inversions in an array
+// using Merge Sort
 #include <bits/stdc++.h>
 using namespace std;
+int merge(int arr[], int temp[], int left, int mid,
+		int right)
+{
+	int i, j, k;
+	int inv_count = 0;
 
-//Function to return the number of elements smaller than the given number by setting the current number as pivot
-int partition(int arr[], int l, int r, int pivot){      //To return the position of the pivot element
-	int lst = pivot, i = l-1, j = l;
-	while (j < r) {
-		if (arr[j] < lst) {
-			i++;
+	i = left;
+	j = mid;
+	k = left;
+	while ((i <= mid - 1) && (j <= right)) {
+		if (arr[i] <= arr[j]) {
+			temp[k] = arr[i];
+            k++;
+            i++;
 		}
-		j++;
+		else {
+			temp[k] = arr[j];
+            k++;
+            j++;
+			inv_count = inv_count + (mid - i);
+		}
 	}
-	return i;
+
+	while (i <= mid - 1){
+        temp[k] = arr[i];
+        k++;
+        i++;
+    }
+		
+	while (j <= right){
+        temp[k] = arr[j];
+        k++;
+        j++;
+    }
+	for (i = left; i <= right; i++){
+        arr[i] = temp[i];
+    }
+		
+
+	return inv_count;
+}
+int _mergeSort(int arr[], int temp[], int left, int right){
+	int mid, inv_count = 0;
+	if (right > left) {
+		mid = (right + left) / 2;
+		inv_count += _mergeSort(arr, temp, left, mid);
+		inv_count += _mergeSort(arr, temp, mid + 1, right);
+		inv_count += merge(arr, temp, left, mid + 1, right);
+	}
+	return inv_count;
+}
+int mergeSort(int arr[], int array_size){
+	int temp[array_size];
+	return _mergeSort(arr, temp, 0, array_size - 1);
 }
 
-void counts_of_inversion(int arr[], int n){
-    int ans =0;
-    for(int i=0;i<n-1;i++){
-        ans += partition(arr, i+1, n, arr[i])-i;
-    }
-    cout<<ans<<endl;
-}
-//Time complexity of above algorithm : O(N^2)
+
+//Time complexity of above algorithm : O(NlogN)
 
 int main(){
     #ifndef ONLINE_JUDGE
@@ -43,5 +80,5 @@ int main(){
     for(int i=0;i<n;i++){
         cin>>arr[i];
     }
-    counts_of_inversion(arr, n);
+    cout<<mergeSort(arr, n);
 }

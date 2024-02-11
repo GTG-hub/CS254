@@ -9,83 +9,48 @@
 using namespace std;
 
 
-int partition(int arr[], int l, int r){ //To return the position of the pivot element
-	int lst = arr[r], i = l, j = l;
-	while (j < r) {
-		if (arr[j] < lst) {
-			swap(arr[i], arr[j]);
-			i++;
-		}
-		j++;
-	}
-	swap(arr[i], arr[r]);
-	return i;
-}
 
 
-int random_pivot_partition(int arr[], int l, int r){  //Picking a random pivot and partitioning
-	int n = r - l + 1;
-	int pivot = rand() % n;
-	swap(arr[l + pivot], arr[r]);
-	return partition(arr, l, r);
-}
-
-void Median_func(int arr[], int l, int r, int k, int& a, int& b){
-	if (l <= r) {
-		int partitioned_index = random_pivot_partition(arr, l, r);
-
-		if (partitioned_index == k) {
-			b = arr[partitioned_index];
-			if (a != -1){
-                return;
-            }
-		}else if (partitioned_index == k - 1) {
-			a = arr[partitioned_index];
-			if (b != -1)
-				return;
-		}
-		if (partitioned_index >= k){
-            return Median_func(arr, l,partitioned_index - 1,k, a, b);
-        }else{
-            return Median_func(arr,partitioned_index + 1,r, k, a, b);
-        }
-			
-	}
-
-	return;
-}
-
-// Function to find Median. Time Complexity: O(NlogN)
-double findMedian(int arr[], int n){
-	double ans;
-    int a = -1, b = -1;
-	if (n % 2 == 1) {
-		Median_func(arr, 0, n - 1,n / 2, a, b);
-		ans = b;
-    }else {
-		Median_func(arr, 0, n - 1,n / 2, a, b);
-		ans = (a + b)*(1.0) / 2.0;
-	}
-    return ans;
-}
-
-//Function ot merge the two arrays. Time Complexity : O(m+n)
-vector<int> merge_sorted_arrays(int A[],int m,  int B[], int n){
-    vector<int> C;
-    int i=0, j=0, k=0;
-    while(k<m+n){
-        if(i==m || B[j]<=A[i]){
-            C.push_back(B[j]);
-            j++;
-        }else if(j==n || B[j]> A[i]){
-            C.push_back(A[i]);
-            i++;
-        }
-        k++;
+double findMedian(vector<int>& A, vector<int>& B)
+{
+    int n = A.size();
+    int m = B.size();
+    if (n > m){
+        return findMedian(B, A); 
     }
-    return C;
+    int lo = 0;
+    int hi = n;
+    int realmidinmergedarray = (n + m + 1) / 2;
+ 
+    while (lo<= hi) {
+        int mid = (lo + hi) / 2;
+        int leftAsize = mid;
+        int leftBsize = realmidinmergedarray - mid;
+        int leftA = (leftAsize > 0)? A[leftAsize - 1]: INT_MIN; 
+        int leftB = (leftBsize > 0) ? B[leftBsize - 1] : INT_MIN;
+        int rightA
+            = (leftAsize < n) ? A[leftAsize] : INT_MAX;
+        int rightB
+            = (leftBsize < m) ? B[leftBsize] : INT_MAX;
 
+        if (leftA <= rightB and leftB <= rightA) {
+            if ((m + n) % 2 == 0)
+                return (max(leftA, leftB)
+                        + min(rightA, rightB))
+                       / 2.0;
+            return max(leftA, leftB);
+        }
+        else if (leftA > rightB) {
+            hi = mid - 1;
+        }
+        else{
+            lo = mid + 1;
+        }
+            
+    }
+    return 0.0;
 }
+//Time complexity: O(logN)
 
 int main(){
     #ifndef ONLINE_JUDGE
@@ -94,20 +59,15 @@ int main(){
     #endif
     int n,m;
     cin>>n>>m;
-    int arr[n];
-    int brr[m];
+    vector<int> arr(n);
+    vector<int> brr(m);
     for(int i=0;i<n;i++){
         cin>>arr[i];
     }
     for(int i=0;i<m;i++){
         cin>>brr[i];
     }
-    vector<int> v = merge_sorted_arrays(arr, n, brr,m);
-    int c[v.size()];
-    for(int i=0;i<v.size();i++){
-        c[i]=v[i];
-    }
-    double ans = findMedian(c, v.size());
+    double ans = findMedian(arr, brr);
     cout<<ans<<endl;
 
 }
