@@ -1,0 +1,2 @@
+Bridge is there in the graph
+Articulation point is there in the graph
