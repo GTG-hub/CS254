@@ -1,0 +1,2 @@
+Profit objtained by greedy method is : 60
+Profit obtained by priority queue is : 60

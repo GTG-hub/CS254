@@ -1,0 +1,2 @@
+The output of greedy approach is : 35
+The output of dynamic programming approach is : 37
